@@ -1,0 +1,24 @@
+
+### 3th bullet ###
+
+ app.get('/weather', (request, response) => { ---- method
+
+request.query.lat, lon, search, etc
+
+### 4th bullet ###
+
+We have to use the .find() method
+Link the lat, lon, and searchQuery to the linked city name
+
+Using the .find() to link the city that is requested from the front end, then grab the information from the city that we found.
+Place that information into variable to send to the front end
+
+have a try catch?
+
+Update the variable to match the correct city
+
+
+
+
+
+
