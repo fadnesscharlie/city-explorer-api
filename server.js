@@ -15,48 +15,86 @@ app.use(cors());
 // use dotenc to access our .enc file -- must be done BEFORE defining PORT
 require('dotenv').config();
 
+const axios = require('axios');
+
 const PORT = process.env.PORT;
 // ------------------------------------------
 // everything above this line is what we need for an express server (or close it)
+console.log('Port Number is: ', PORT)
 
 class Forecast {
-  constructor(date, des) {
-    this.date = date;
-    this.des = des;
+  constructor(day) {
+    this.date = `Date: ${day.valid_date}.`;
+    this.des = `Has ${day.weather.description}`;
   }
 }
 
-let weatherData = require('./data/weather.json');
-
-console.log('Port is: ', PORT)
-
-try {
-  app.get('/weather', (request, response) => {
-    let searchQuery = request.query.city_name;
-    let weatherArray = [];
-
-    // If we get the request from the front end
-    if (searchQuery) {
-      let cityWeather = weatherData.find(town => town.city_name === searchQuery);
-
-      // If the request matches a city in our data
-      if (cityWeather) {
-        cityWeather.data.map(info => {
-          weatherArray.push(
-            // Push in Object array of each day
-            new Forecast(
-              `${searchQuery} has ${info.weather.description} on ${info.valid_date}. The Longitude is ${cityWeather.lon}, the Latitude is ${cityWeather.lat}.`
-            )
-          )
-        })
-      }
-    };
-    // Send back the object array to the front end when they ask for it
-    response.send(weatherArray);
-  })
-  } catch (error) {
-    console.log(`Error occcured: ${error.response.data.error}, Status: ${error.response.status}`)
+class Movies {
+  constructor(movie) {
+    this.imageUrl = `"Image Url": ${movie.backdrop_path}.`;
+    this.overview = `"Overview": ${movie.overview}.`;
+    this.popularity = `"Popularity": ${movie.popularity}.`;
+    this.released = `"Released On": ${movie.release_date}.`;
+    this.title = `"Title": ${movie.title}.`;
+    this.totalVotes = `"Total Votes": ${movie.vote_count}.`;
+    this.votes = `"Votes": ${movie.vote_average}.`;
+  }
 }
+
+app.get('/weather', async (request, response) => {
+  let multiDayWeather = [];
+  try {
+    let searchQuery = request.query.city_name;
+
+    let weatherData = await axios.get(`https://api.weatherbit.io/v2.0/current?city=${searchQuery}&key=${process.env.WEATHER_API_KEY}`);
+
+    // Pull out the lon and lat from this api
+    let lon = weatherData.data.data[0].lon
+    let lat = weatherData.data.data[0].lat
+
+    // Use that lon and lat into the new api
+    multiDayWeather = await axios.get(`https://api.weatherbit.io/v2.0/forecast/daily?lat=${lat}&lon=${lon}&key=${process.env.WEATHER_API_KEY}`);
+
+    response.send(multiDayWeather.data.data.map(day => new Forecast(day)));
+  } catch (error) {
+    console.log(`Error: ${error}`)
+  }
+
+});
+
+app.get('/movies', async (request, response) => {
+  try {
+
+    let searchQuery = request.query.city_name;
+
+    // let searchQuery = 'Seattle';
+
+    let movies = await axios.get(`https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&query=${searchQuery}`)
+
+    console.log(movies.data.results);
+
+    // let movieName =
+
+
+    response.send(movies.data.results.map(movie => new Movies(movie)));
+  } catch (error) {
+    console.log(`Error: ${error}`)
+  }
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // specify what routes our server should be listening for
 app.get('/', (request, response) => {
@@ -74,8 +112,6 @@ app.get('/*', (request, response) => {
 // ---------------------------------------------------
 // Entry Info Below
 
-// tell our server to start listening for requests
-app.listen(PORT, () => console.log(`listening on port ${PORT}`));
 
 app.get('/banana', (request, response) => {
   // when we get THAT request, we send the following results
@@ -89,3 +125,7 @@ app.get('/sayHello,', (request, response) => {
   let name = request.query.name;
   response.send(`Hello, ${name}`);
 });
+
+// tell our server to start listening for requests
+// MUST BE LAST
+app.listen(PORT, () => console.log(`listening on port ${PORT}`));

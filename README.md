@@ -34,7 +34,7 @@ JSON
 ## Credit and Collaborations
 <!-- Give credit (and a link) to other people or resources that helped you build this application. -->
 
-Name of feature: Server
+## Name of feature: Server
 
 Estimate of time needed to complete: 4 hours
 
@@ -43,3 +43,13 @@ Start time: 1:45pm 7/31/2021
 Finish time: 8:30pm 8/1/2021
 
 Actual time needed to complete: 8 Hours
+
+## Name of feature: API Calls
+
+Estimate of time needed to complete: 5 hours
+
+Start time: 8:45pm 8/3/2021
+
+Finish time: 11:00pm 8/4/2021
+
+Actual time needed to complete: 6 hours
