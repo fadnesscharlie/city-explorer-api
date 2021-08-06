@@ -64,12 +64,12 @@ app.get('/weather', async (request, response) => {
 
 app.get('/movies', async (request, response) => {
   try {
-
-    let searchQuery = request.query.city_name;
+    let searchQuery = request.query.query;
 
     // let searchQuery = 'Seattle';
 
     let movies = await axios.get(`https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&query=${searchQuery}`)
+
 
     console.log(movies.data.results);
 
