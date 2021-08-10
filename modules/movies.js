@@ -18,10 +18,11 @@ class Movies {
 async function getMovies (request, response){
   try {
     let searchQuery = request.query.query;
+    console.log('searchQuery', searchQuery);
 
     let movies = await axios.get(`https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&query=${searchQuery}`)
    
-    console.log('MOVIES1!!', movies.data.results);
+    // console.log('MOVIES1!!', movies.data.results);
    
     response.send(movies.data.results.map(movie => new Movies(movie)));
   } catch (error) {

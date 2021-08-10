@@ -15,7 +15,7 @@ app.use(cors());
 // use dotenc to access our .enc file -- must be done BEFORE defining PORT
 require('dotenv').config();
 
-const axios = require('axios');
+// const axios = require('axios');
 
 const PORT = process.env.PORT;
 // ------------------------------------------
