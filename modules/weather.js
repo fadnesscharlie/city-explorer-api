@@ -14,13 +14,9 @@ async function getWeather(request, response) {
   let getLat = 0;
   let getLon = 0;
   try {
-    try {
       getLat = request.query.lat;
       getLon = request.query.lon;
       console.log('inside weather backend');
-    } catch (error) {
-      console.log('error with Retriving Lat,Lon', error);
-    }
     // let getLat = 47
     // let getLon = -122
     try {
