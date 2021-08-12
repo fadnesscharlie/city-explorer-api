@@ -2,31 +2,52 @@
 
 const axios = require('axios');
 
-class Forecast {
+let cache = require('../cache.js');
+
+module.exports = weatherHandler;
+
+class Weather {
   constructor(day) {
-    this.date = `Date: ${day.valid_date}.`;
-    this.des = `Has ${day.weather.description}`;
+    this.forecast = day.weather.description;
+    this.time = day.datetime;
   }
 }
 
-async function getWeather(request, response) {
-  let multiDayWeather = [];
-  try {
-    let getLat = request.query.lat;
-    let getLon = request.query.lon;
-    console.log('inside weather backend');
-    // let getLat = 47
-    // let getLon = -122
-    console.log('lon', getLon, 'lat', getLat);
-    multiDayWeather = await axios.get(`https://api.weatherbit.io/v2.0/forecast/daily?lat=${getLat}&lon=${getLon}&key=${process.env.WEATHER_API_KEY}`);
+function weatherHandler(request, response) {
+  const { lat, lon } = request.query;
 
-    console.log(multiDayWeather.data.data);
+  getWeather(lat, lon)
+  .then(summaries => response.send(summaries))
+  .catch((error) => {
+    console.error(error);
+    response.status(200).send('Sorry. Something went wrong!')
+  });
+}  
 
-    response.send(multiDayWeather.data.data.map(day => new Forecast(day)));
-  } catch (error) {
-    console.log(`Error Function/response: ${error}`)
+async function getWeather(latitude, longitude) {
+
+  const key = 'weather-' + latitude + longitude;
+  const url = `http://api.weatherbit.io/v2.0/forecast/daily/?key=${process.env.WEATHER_API_KEY}&lang=en&lat=${latitude}&lon=${longitude}&days=5`;
+
+  if (cache[key] && (Date.now() - cache[key].timestamp < (1000 * 10))) {
+    console.log('Cache Weather hit');
+  } else {
+    console.log('Cache Weather Miss');
+    cache[key] = {};
+    cache[key].timestamp = Date.now();
+    cache[key].data = await axios.get(url)
+    .then(response => parseWeather(response.data));
   }
+  return cache[key].data;
+}
 
-};
-
-module.exports = getWeather;
+function parseWeather(weatherData) {
+  try {
+    const weatherSummaries = weatherData.data.map(day => {
+      return new Weather(day);
+    });
+    return Promise.resolve(weatherSummaries);
+  } catch (e) {
+    return Promise.reject(e);
+  }
+}
