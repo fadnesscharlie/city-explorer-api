@@ -20,7 +20,7 @@ function weatherHandler(request, response) {
   .then(summaries => response.send(summaries))
   .catch((error) => {
     console.error(error);
-    response.status(200).send('Sorry. Something went wrong!')
+    response.status(500).send('Sorry. Something went wrong!')
   });
 }  
 
@@ -36,7 +36,7 @@ async function getWeather(latitude, longitude) {
     cache[key] = {};
     cache[key].timestamp = Date.now();
     cache[key].data = await axios.get(url)
-    .then(response => parseWeather(response.data));
+    .then(response => parseWeather(response.data)); // Send Data
   }
   return cache[key].data;
 }
