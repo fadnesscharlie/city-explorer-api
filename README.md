@@ -9,13 +9,21 @@ We are creating a server to take information from the front end and will be pass
 
 This server will get a request for a city in our database, when our city matches that database, it will return with the information on that city
 
+-[Heroku Link](https://city-explorer-app1.herokuapp.com/)
+
 ## Getting Started
 <!-- What are the steps that a user must take in order to build this app on their own machine and get it running? -->
 
-Clone the repo.
-Run `npm i` in your terminal inside this repo
-Run `npm start`
-Make sure it is on `localhost:3001`
+- Pull down/clone from this Repo
+- Do `npm i` to install all the nessessary packages inside this react file while in your terminal
+- Create a .env file
+  - Follow the sample.env for reference
+  - Place your key:
+    - PORT
+    - LocalHost
+    - Movie API
+    - Weather API
+- Run local host
 
 ## Architecture
 <!-- Provide a detailed description of the application design. What technologies (languages, libraries, etc) you're using, and any other relevant design information. -->
